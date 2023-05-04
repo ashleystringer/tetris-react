@@ -1,0 +1,24 @@
+Board
+    - Create a Canvas representation of a ROWS * COLS Board
+    - Create an array to represent the Board
+        - Either consisting of colors
+        - or consisting of binary representations of blocks on the board
+    - Prevent a piece from going out of bounds using collision detection
+        - Prevent the processes of "moving" a piece if at least one "bit" is found
+        - to be colliding with either side or the bottom
+    - Once a piece hits the bottom
+        - Make the location it's fallen in that color on the board canvas
+        - Create a new piece
+    - If a piece reaches the top of board canvas
+        - Signal a game over
+    - If the bottom row is filled, remove and replace it with the row above
+    - Repeat the drop cycle for the piece
+Piece
+    - Create a new piece
+    - Randomize the piece being created
+    - Draw a piece onto the Board canvas iterating through each "bit"
+    - Undraw a piece
+    - Create an X and Y for a piece that corresponds to directions on the Board
+    - Simulate moving down, left, and right with these
+        - Undraw, (X or Y), draw
+    
