@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 
-export default function Piece({ boardCtx, drawPixel, x, y }) { //boardCtx, boardArray
+export default function Piece({ boardCtx, drawPixel, x, y, isGameRunning }) { //boardCtx, boardArray
 
     const [testPiece, setTestPiece] = useState([]);
 
@@ -14,10 +14,27 @@ export default function Piece({ boardCtx, drawPixel, x, y }) { //boardCtx, board
             [0, 1, 0]
         ]);
 
-        drawPiece();
+        //drawPiece();
 
         pieceDown();
+
+        //drop(dropTime);
+        
+
+
     }, [boardCtx]);
+
+    useEffect(() => {
+        console.log(`isGameRunning: ${isGameRunning}`);
+        //start game
+
+        if(isGameRunning){
+            let dropTime = Date.now();
+            console.log(`dropTime: ${dropTime}`);
+            drop(dropTime);
+        }
+        
+    }, [isGameRunning]);
 
     function drawPiece(){
         for(let r = 0; r < testPiece.length; r++){
@@ -41,46 +58,31 @@ export default function Piece({ boardCtx, drawPixel, x, y }) { //boardCtx, board
         drawPiece();
     }
     function pieceLeft(){
-        /*
-            undraw();
-            x++;
-            draw();
-        */
+        undrawPiece();
+        x--;
+        drawPiece();
     }
     function pieceRight(){
-        /*
-            undraw();
-            x--;
-            draw();
-        */
+        undrawPiece();
+        x++;
+        drawPiece();
     }
 
-    /*
-    this.piece = 0;
-    this.X = 0;
-    this.Y = 0;
+    //let dropTime = new Date.now();
+    function drop(dropTime){
+        //console.log('drop');
+        console.log(`dropTime: ${dropTime}`);
+        let now = Date.now();
+        let deltaTime = now - dropTime;
 
-
-    function draw(){
-        for(let x = 0; x < piece.length; x++){
-            for(let y = 0; y < piece.length; y++){
-                //boardCtx.fillStyle();
-                //boardCtx.fillRect();
-            }
+        if(deltaTime > 1000){
+            //pieceDown();
+            dropTime = Date.now();
+            console.log("deltaTime");
         }
+        requestAnimationFrame(drop);
     }
-    function undraw(){
-
-    }
-    */
-    /*
-        - Draw a piece onto the Board canvas iterating through each "bit"
-        - Undraw a piece
-        - Create an X and Y for a piece that corresponds to directions on the Board
-        - Simulate moving down, left, and right with these
-            - Undraw, (X or Y), draw
-        - Prevent a piece from going out of bounds using collision detection
-    */
+    
     return (
         <div>
             

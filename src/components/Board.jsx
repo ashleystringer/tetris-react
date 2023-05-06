@@ -18,6 +18,7 @@ export default function Board() {
 
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
+    const [isGameRunning, setIsGameRunning] = useState(false);
 
     const boardCanvasRef = useRef();
     const [boardCtx, setBoardCtx] = useState([]);
@@ -65,16 +66,45 @@ export default function Board() {
     }
 
     /*
+    let dropTime = new Date.now();
+    functiopn drop(){
+        let now = new Date.now();
+        let deltaTime = now - dropTime;
+
+        if(deltaTime > 1000){
+            requestAnimationFrame(drop);
+            //? dropPiece(); //?
+        }
+    }
+    */
+
+    /*
     - Create a Canvas representation of a ROWS * COLS Board
     - Create an array to represent the Board
     - Repeat the drop cycle for the piece
     */
+
+    function playGame(){
+        setIsGameRunning((prevState) => {
+            return !prevState;
+        });
+    }
+
     return (
         <>
             <div>Hello</div>
-            <Piece boardCtx={boardCtx} drawPixel={drawPixel} x={x} y={y}/>
+            <Piece 
+                boardCtx={boardCtx} 
+                drawPixel={drawPixel} 
+                x={x} 
+                y={y}
+                isGameRunning={isGameRunning}
+            />
             <canvas ref={boardCanvasRef} width="600" height="600"></canvas>
-
+            <br/>
+            <button onClick={playGame}>
+                {isGameRunning ? "Pause Game" : "Play Game"}
+            </button>
         </>
     )
 }
