@@ -7,3 +7,4 @@
 7. Use collision detection to prevent Piece from going off of Board
 8. Use collision detection to prevent a piece falling into another one
 9. Lock pieces into place
+10.
