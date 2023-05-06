@@ -1,0 +1,9 @@
+1. Draw an individual pixel
+2. Draw a board using drawPixel
+3. Draw a piece using drawPixel
+4. Undraw a piece
+5. Allow the piece to move using X and Y (probably in Board)
+6. Using requestAnimationFrame or setInterval to make the piece move (probably in Board)
+7. Use collision detection to prevent Piece from going off of Board
+8. Use collision detection to prevent a piece falling into another one
+9. Lock pieces into place
