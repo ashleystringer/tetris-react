@@ -35,6 +35,35 @@ export default function Board() {
 
     }, []);
 
+    useEffect(() => {
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+
+    }, []);
+
+    function handleKeyDown(e){
+        switch(e.keyCode){
+            case 87:
+                //rotate
+                console.log("rotate");
+                break;
+            case 65:
+                console.log("left");
+                //left
+                break;
+            case 68:
+                console.log("right");
+                //right
+                break;
+            case 83:
+                console.log("down");
+                break;
+        }
+    }
+
     function drawPixel(x, y, color){ 
 
         const boardContext = boardCanvasRef.current.getContext("2d");
@@ -45,12 +74,6 @@ export default function Board() {
         boardContext.strokeStyle = "black";
         boardContext.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);        
     }
-
-    /*
-    const drawPixel = (x, y, color) => {
-
-    }
-    */
 
     function drawBoardCanvas(){
 
@@ -66,19 +89,6 @@ export default function Board() {
     }
 
     /*
-    let dropTime = new Date.now();
-    functiopn drop(){
-        let now = new Date.now();
-        let deltaTime = now - dropTime;
-
-        if(deltaTime > 1000){
-            requestAnimationFrame(drop);
-            //? dropPiece(); //?
-        }
-    }
-    */
-
-    /*
     - Create a Canvas representation of a ROWS * COLS Board
     - Create an array to represent the Board
     - Repeat the drop cycle for the piece
@@ -92,7 +102,6 @@ export default function Board() {
 
     return (
         <>
-            <div>Hello</div>
             <Piece 
                 boardCtx={boardCtx} 
                 drawPixel={drawPixel} 

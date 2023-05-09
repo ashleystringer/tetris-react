@@ -26,15 +26,22 @@ export default function Piece({ boardCtx, drawPixel, x, y, isGameRunning }) { //
 
     useEffect(() => {
         console.log(`isGameRunning: ${isGameRunning}`);
-        //start game
-
-        if(isGameRunning){
-            let dropTime = Date.now();
-            console.log(`dropTime: ${dropTime}`);
-            drop(dropTime);
+        let dropTime = Date.now();
+        function drop(){
+            let now = Date.now();
+            let deltaTime = now - dropTime;
+            if(deltaTime > 1000){
+                pieceDown();
+                dropTime = Date.now();
+            }
+            requestAnimationFrame(drop);
         }
-        
+
+        drop(); 
+
+       return () => { cancelAnimationFrame(drop)}
     }, [isGameRunning]);
+
 
     function drawPiece(){
         for(let r = 0; r < testPiece.length; r++){
@@ -71,11 +78,12 @@ export default function Piece({ boardCtx, drawPixel, x, y, isGameRunning }) { //
     //let dropTime = new Date.now();
     function drop(dropTime){
         //console.log('drop');
-        console.log(`dropTime: ${dropTime}`);
+        //console.log(`dropTime: ${dropTime}`);
         let now = Date.now();
         let deltaTime = now - dropTime;
+        console.log(`deltaTime: ${deltaTime}`);
 
-        if(deltaTime > 1000){
+        if(deltaTime > 1000 && isGameRunning){
             //pieceDown();
             dropTime = Date.now();
             console.log("deltaTime");
