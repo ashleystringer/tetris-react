@@ -4,6 +4,20 @@ export default function Piece({ boardCtx, drawPixel, x, y, isGameRunning }) { //
 
     const [testPiece, setTestPiece] = useState([]);
 
+    /*
+    const [isPaused, setIsPaused] = useState(true);
+    const animRef = useRef();
+
+    useEffect(() => {
+        if(!isPaused){
+            animRef.current.value = requestAnimationFrame();
+        }else{
+            animRef.crruent.value = cancelAnimationFrame();
+        }        
+    }, [isPaused]);
+    //
+    */
+
     useEffect(()=>{
         console.log('boardCtx in Piece');
         console.log(boardCtx);
