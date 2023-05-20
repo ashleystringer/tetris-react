@@ -1,22 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react'
 
-export default function Piece({ boardCtx, drawPixel, x, y, isGameRunning }) { //boardCtx, boardArray
+export default function Piece({ boardCtx, drawPixel, x, y, setY, isGameRunning }) { //boardCtx, boardArray
 
+    //const [y, setY] = useState(0);
     const [testPiece, setTestPiece] = useState([]);
-
-    /*
-    const [isPaused, setIsPaused] = useState(true);
     const animRef = useRef();
 
     useEffect(() => {
-        if(!isPaused){
-            animRef.current.value = requestAnimationFrame();
-        }else{
-            animRef.crruent.value = cancelAnimationFrame();
-        }        
-    }, [isPaused]);
-    //
-    */
+        console.log("Y in useEffect hook");
+    }, [y]);
 
     useEffect(()=>{
         console.log('boardCtx in Piece');
@@ -28,32 +20,30 @@ export default function Piece({ boardCtx, drawPixel, x, y, isGameRunning }) { //
             [0, 1, 0]
         ]);
 
-        //drawPiece();
-
-        pieceDown();
-
-        //drop(dropTime);
-        
-
-
     }, [boardCtx]);
 
     useEffect(() => {
         console.log(`isGameRunning: ${isGameRunning}`);
         let dropTime = Date.now();
         function drop(){
+            console.log(`x: ${x}, y: ${y}`);
             let now = Date.now();
             let deltaTime = now - dropTime;
             if(deltaTime > 1000){
                 pieceDown();
                 dropTime = Date.now();
             }
-            requestAnimationFrame(drop);
+            if(isGameRunning){
+                animRef.current = requestAnimationFrame(drop); 
+            }
+            //animRef.current = requestAnimationFrame(drop);
         }
 
-        drop(); 
+        animRef.current = requestAnimationFrame(drop);
+        
+        //drop(); 
 
-       return () => { cancelAnimationFrame(drop)}
+       return () => { cancelAnimationFrame(animRef.current)}
     }, [isGameRunning]);
 
 
@@ -73,9 +63,13 @@ export default function Piece({ boardCtx, drawPixel, x, y, isGameRunning }) { //
             }
         }
     }
-    function pieceDown(){
+    function pieceDown()
+    {
         undrawPiece();
         y++;
+        //setY(num => num++);
+        //console.log(setY);
+        //console.log(`y: ${y}`);
         drawPiece();
     }
     function pieceLeft(){
@@ -87,22 +81,6 @@ export default function Piece({ boardCtx, drawPixel, x, y, isGameRunning }) { //
         undrawPiece();
         x++;
         drawPiece();
-    }
-
-    //let dropTime = new Date.now();
-    function drop(dropTime){
-        //console.log('drop');
-        //console.log(`dropTime: ${dropTime}`);
-        let now = Date.now();
-        let deltaTime = now - dropTime;
-        console.log(`deltaTime: ${deltaTime}`);
-
-        if(deltaTime > 1000 && isGameRunning){
-            //pieceDown();
-            dropTime = Date.now();
-            console.log("deltaTime");
-        }
-        requestAnimationFrame(drop);
     }
     
     return (

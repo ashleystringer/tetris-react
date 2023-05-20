@@ -107,6 +107,7 @@ export default function Board() {
                 drawPixel={drawPixel} 
                 x={x} 
                 y={y}
+                setY={setY}
                 isGameRunning={isGameRunning}
             />
             <canvas ref={boardCanvasRef} width="600" height="600"></canvas>
@@ -114,6 +115,7 @@ export default function Board() {
             <button onClick={playGame}>
                 {isGameRunning ? "Pause Game" : "Play Game"}
             </button>
+            Y value: {y}
         </>
     )
 }
