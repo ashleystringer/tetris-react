@@ -1,12 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Piece from "./Piece";
+import pieceArray from "../constants/pieces";
 
 export default function Board() {
 
     /*
         - Create a Piece
-        - Allow Piece the use of drawPixel()
-        - Create state for X and Y to use in Pixel 
         - ??? Collision detection 
         - ??? "Locking" pieces
         - ??? Removing the bottom row of the Board
@@ -16,26 +15,28 @@ export default function Board() {
     const COLS = 10;
     const BLOCK_SIZE = 30;
 
-    const [x, setX] = useState(0);
-    const [y, setY] = useState(0);
     const [isGameRunning, setIsGameRunning] = useState(false);
+    const [pieceOrient, setPieceOrient] = useState("");
 
     const boardCanvasRef = useRef();
     const [boardCtx, setBoardCtx] = useState([]);
 
     useEffect(() => {
 
-        console.log(`boardCtx: ${boardCtx}`);
+        //console.log(`boardCtx: ${boardCtx}`);
+
+        //console.log(`pieceArray.length: ${pieceArray.length}`);
 
         drawBoardCanvas();
 
-        console.log(boardCanvasRef.current.getContext("2d"));
+        //console.log(boardCanvasRef.current.getContext("2d"));
 
         setBoardCtx(boardCanvasRef.current.getContext("2d"));
 
     }, []);
 
     useEffect(() => {
+        console.log("addEventListener");
         document.addEventListener("keydown", handleKeyDown);
 
         return () => {
@@ -45,21 +46,26 @@ export default function Board() {
     }, []);
 
     function handleKeyDown(e){
+        //setPieceOrient(e.keyCode);
         switch(e.keyCode){
             case 87:
                 //rotate
                 console.log("rotate");
+                setPieceOrient("87");
                 break;
             case 65:
                 console.log("left");
+                setPieceOrient("65");
                 //left
                 break;
             case 68:
                 console.log("right");
+                setPieceOrient("68");
                 //right
                 break;
             case 83:
                 console.log("down");
+                setPieceOrient("83");
                 break;
         }
     }
@@ -101,14 +107,19 @@ export default function Board() {
         });
     }
 
+    
+    const piece = () => {
+        const randomInt = Math.floor(Math.random() * piecesArray.length);
+        return piecesArray[randomInt];
+    }
+
     return (
         <>
             <Piece 
                 boardCtx={boardCtx} 
                 drawPixel={drawPixel} 
-                x={x} 
-                y={y}
-                setY={setY}
+                pieceOrient={pieceOrient}
+                setPieceOrient={setPieceOrient}
                 isGameRunning={isGameRunning}
             />
             <canvas ref={boardCanvasRef} width="600" height="600"></canvas>
@@ -116,7 +127,6 @@ export default function Board() {
             <button onClick={playGame}>
                 {isGameRunning ? "Pause Game" : "Play Game"}
             </button>
-            Y value: {y}
         </>
     )
 }

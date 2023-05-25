@@ -1,16 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react'
+//import "../constants/pieces.js";
 
-export default function Piece({ boardCtx, drawPixel, x, isGameRunning }) { //boardCtx, boardArray
+export default function Piece({ boardCtx, drawPixel, pieceOrient, setPieceOrient, isGameRunning }) { //boardCtx, boardArray
 
-    //const [y, setY] = useState(0);
+    /*
+    - Get the piece directions working
+    - Get the piece randomized
+    - Get the collision detection
+    */
+
     const xRef = useRef(0);
     const yRef = useRef(0);
     const [testPiece, setTestPiece] = useState([]);
     const animRef = useRef();
 
     useEffect(()=>{
-        console.log('boardCtx in Piece');
-        console.log(boardCtx);
+        //console.log('boardCtx in Piece');
+        //console.log(boardCtx);
 
         setTestPiece([
             [1, 1, 1],
@@ -21,7 +27,13 @@ export default function Piece({ boardCtx, drawPixel, x, isGameRunning }) { //boa
     }, [boardCtx]);
 
     useEffect(() => {
-        console.log(`isGameRunning: ${isGameRunning}`);
+        //console.log(`pieceOrient: ${pieceOrient}`);
+
+        handleOrientation();
+    }, [pieceOrient]);
+
+    useEffect(() => {
+        //console.log(`isGameRunning: ${isGameRunning}`);
         let dropTime = Date.now();
         function drop(){
             let now = Date.now();
@@ -42,12 +54,42 @@ export default function Piece({ boardCtx, drawPixel, x, isGameRunning }) { //boa
 
        return () => { cancelAnimationFrame(animRef.current)}
     }, [isGameRunning]);
+    
+    function handleOrientation(){
+        console.log("handleOrientation");
+        switch(pieceOrient){
+            case "87":
+                //rotate
+                break;
+            case "65":
+                pieceLeft();
+                break;
+            case "68":
+                pieceRight();
+                break;
+            case "83":
+                pieceDown();
+                break;
+        }
+        setPieceOrient("");
+    }
 
     /*
-    const piece = () => {
-        const randomInt = Math.floor(Math.random() * pieces.length);
-        return pieces[randomInt];
+    function lockPiece() {
+        for (let r = 0; r < piece.selectedPiece.length; r++) {
+            for (let c = 0; c < piece.selectedPiece.length; c++) {
+                if (piece.selectedPiece[r][c]) {
+                    const offsetX = piece.selectedPiece.x + r;
+                    const offsetY = piece.selectedPiece.y + c;
+
+                    drawPixel(offsetX, offsetY, piece.color);
+                }
     }
+  }
+
+  piece = new Piece(pieceArray[1]);
+  setPiece({});
+}
     */
 
     function drawPiece(){
@@ -66,27 +108,27 @@ export default function Piece({ boardCtx, drawPixel, x, isGameRunning }) { //boa
             }
         }
     }
+
+    function pieceRotate(){
+        undrawPiece();
+        //
+        drawPiece();
+    }
+
     function pieceDown()
     {
         undrawPiece();
-        //y++;
         yRef.current = yRef.current + 1;
-        console.log(yRef.current);
-        //setY(num => num++);
-        //console.log(setY);
-        //console.log(`y: ${y}`);
         drawPiece();
     }
     function pieceLeft(){
         undrawPiece();
         xRef.current = xRef.current - 1;
-        //x--;
         drawPiece();
     }
     function pieceRight(){
         undrawPiece();
         xRef.current = xRef.current + 1;
-        //x++;
         drawPiece();
     }
 
