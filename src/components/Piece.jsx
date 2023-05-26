@@ -1,28 +1,36 @@
 import React, { useEffect, useState, useRef } from 'react'
 //import "../constants/pieces.js";
 
-export default function Piece({ boardCtx, drawPixel, pieceOrient, setPieceOrient, isGameRunning }) { //boardCtx, boardArray
-
+export default function Piece({ values }) { //boardCtx, boardArray
+    const {
+        boardCtx, 
+        drawPixel, 
+        pieceOrient, 
+        setPieceOrient, 
+        isGameRunning, 
+        piece,
+        setPiece,
+        boardArray,
+        ROWS,
+        COLS
+    } = values;
     /*
-    - Get the piece directions working
-    - Get the piece randomized
     - Get the collision detection
     */
 
     const xRef = useRef(0);
     const yRef = useRef(0);
-    const [testPiece, setTestPiece] = useState([]);
+    const dirIndexRef = useRef(0);
     const animRef = useRef();
 
     useEffect(()=>{
         //console.log('boardCtx in Piece');
         //console.log(boardCtx);
 
-        setTestPiece([
-            [1, 1, 1],
-            [0, 1, 0],
-            [0, 1, 0]
-        ]);
+
+        if(piece?.piece){
+            console.log(piece.piece[dirIndexRef.current]);
+        }
 
     }, [boardCtx]);
 
@@ -56,10 +64,9 @@ export default function Piece({ boardCtx, drawPixel, pieceOrient, setPieceOrient
     }, [isGameRunning]);
     
     function handleOrientation(){
-        console.log("handleOrientation");
         switch(pieceOrient){
             case "87":
-                //rotate
+                pieceRotate();
                 break;
             case "65":
                 pieceLeft();
@@ -75,75 +82,86 @@ export default function Piece({ boardCtx, drawPixel, pieceOrient, setPieceOrient
     }
 
     /*
-    function lockPiece() {
-        for (let r = 0; r < piece.selectedPiece.length; r++) {
-            for (let c = 0; c < piece.selectedPiece.length; c++) {
-                if (piece.selectedPiece[r][c]) {
-                    const offsetX = piece.selectedPiece.x + r;
-                    const offsetY = piece.selectedPiece.y + c;
-
-                    drawPixel(offsetX, offsetY, piece.color);
-                }
-    }
-  }
-
-  piece = new Piece(pieceArray[1]);
-  setPiece({});
-}
+        - One a piece is locked
+        - indicate that a new piece needs to be created
     */
 
     function drawPiece(){
-        for(let r = 0; r < testPiece.length; r++){
-            for(let c = 0; c < testPiece.length; c++){
-                if(testPiece[r][c]){
+        const index = dirIndexRef.current;
+        const selectedPiece = piece.piece[index];
+
+        console.log(`index: ${index}`);
+
+        for(let r = 0; r < selectedPiece.length; r++){
+            for(let c = 0; c < selectedPiece.length; c++){
+                if(selectedPiece[r][c]){ //piece.piece[dirIndexRef.current]
                     drawPixel(r + xRef.current, c + yRef.current, "blue");   
                 }
             }
         }
     }
     function undrawPiece(){
-        for(let r = 0; r < testPiece.length; r++){
-            for(let c = 0; c < testPiece.length; c++){
-                drawPixel(r + xRef.current, c + yRef.current, "white");
+        const index = dirIndexRef.current;
+        const selectedPiece = piece.piece[index];
+
+        for(let r = 0; r < selectedPiece.length; r++){ 
+            for(let c = 0; c < selectedPiece.length; c++){
+                if(selectedPiece[r][c]){ //piece.piece[dirIndexRef.current]
+                    drawPixel(r + xRef.current, c + yRef.current, "white");   
+                }
             }
         }
     }
 
     function pieceRotate(){
         undrawPiece();
-        //
+
+       dirIndexRef.current = dirIndexRef.current + 1;
+
+        if(dirIndexRef.current >= piece.piece.length){
+            dirIndexRef.current = 0;
+        }
         drawPiece();
     }
 
     function pieceDown()
     {
-        undrawPiece();
-        yRef.current = yRef.current + 1;
-        drawPiece();
+        if(!checkCollision(0, 1)){
+            undrawPiece();
+            yRef.current = yRef.current + 1;
+            drawPiece();
+        }
     }
     function pieceLeft(){
-        undrawPiece();
-        xRef.current = xRef.current - 1;
-        drawPiece();
+        if(!checkCollision(-1, 0)){
+            undrawPiece();
+            xRef.current = xRef.current - 1;
+            drawPiece();
+        }
     }
     function pieceRight(){
-        undrawPiece();
-        xRef.current = xRef.current + 1;
-        drawPiece();
+        if(!checkCollision(1, 0)){
+            undrawPiece();
+            xRef.current = xRef.current + 1;
+            drawPiece();
+        }
     }
 
-    /*
+    
     function checkCollision(x, y){
-        for(let r = 0; r < testPiece.length; r++){
-            for(let c = 0; c < testPiece.length; c++){
-                if(!testPiece[r][c]){
+        const index = dirIndexRef.current;
+        const selectedPiece = piece.piece[index];
+
+        for(let r = 0; r < selectedPiece.length; r++){
+            for(let c = 0; c < selectedPiece.length; c++){
+                if(!selectedPiece[r][c]){
                     continue;
                 }
 
-                let offsetX = r + testPiece.x + xRef.current;
-                let offsetY = c + testPiece.y + yRef.current;
+                let offsetX = r + xRef.current + x;
+                let offsetY = c + yRef.current + y;
 
-                if(offsetX < 0 || offsetX >= COLS || offsetY >= ROLS){
+                if(offsetX < 0 || offsetX >= COLS || offsetY >= ROWS){
                     return true;
                 }
 
@@ -153,8 +171,27 @@ export default function Piece({ boardCtx, drawPixel, pieceOrient, setPieceOrient
             }
         }
     }
-    */
-    
+
+    function lockPiece(){
+        const index = dirIndexRef.current;
+        const selectedPiece = piece.piece[index];
+
+        for(let r = 0; r < selectedPiece.length; r++){
+            for(let c = 0; c < selectedPiece.length; c++){
+                if(selectedPiece[r][c]){
+                    const offsetX = xRef.current + r;
+                    const offsetY = yRef.current + c;
+
+                    drawPixel(offsetX, offsetY, "blue");
+                }
+            }
+        }
+
+        /*
+        piece = new Piece(pieceArray[1]);
+        setPiece({});
+        */
+    }
     return (
         <div>
             

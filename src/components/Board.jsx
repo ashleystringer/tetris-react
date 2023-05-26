@@ -16,10 +16,12 @@ export default function Board() {
     const BLOCK_SIZE = 30;
 
     const [isGameRunning, setIsGameRunning] = useState(false);
+    const [selectedPiece, setSelectedPiece] = useState(null);
     const [pieceOrient, setPieceOrient] = useState("");
 
     const boardCanvasRef = useRef();
     const [boardCtx, setBoardCtx] = useState([]);
+    const [boardArray, setBoardArray] = useState([]);
 
     useEffect(() => {
 
@@ -27,11 +29,18 @@ export default function Board() {
 
         //console.log(`pieceArray.length: ${pieceArray.length}`);
 
+        setBoardArray(createBoardArray());
+
         drawBoardCanvas();
 
         //console.log(boardCanvasRef.current.getContext("2d"));
 
         setBoardCtx(boardCanvasRef.current.getContext("2d"));
+
+        const newPiece = piece();
+        setSelectedPiece(newPiece);
+
+        console.log(newPiece);
 
     }, []);
 
@@ -72,6 +81,8 @@ export default function Board() {
 
     function drawPixel(x, y, color){ 
 
+        console.log(boardArray)
+
         const boardContext = boardCanvasRef.current.getContext("2d");
 
         boardContext.fillStyle = color;
@@ -86,20 +97,20 @@ export default function Board() {
         for(let r = 0; r < ROWS; r++){
             for(let c = 0; c < COLS; c++){
                 drawPixel(c, r, "white");
-                //boardArray[r][c] = "white";
+                if(boardArray){
+                    //console.log("boardArray exists");
+                    //console.log(boardArray);
+                    //boardArray[r][c] = "white";
+                    //
+                }
             }
         }
+        //console.table(boardArray);
     }
 
     function createBoardArray(){
-        return Array.from({length: ROWS}, Array(COLS).fill(0));
+        return Array.from({length: ROWS}, () => Array(COLS).fill(0));
     }
-
-    /*
-    - Create a Canvas representation of a ROWS * COLS Board
-    - Create an array to represent the Board
-    - Repeat the drop cycle for the piece
-    */
 
     function playGame(){
         setIsGameRunning((prevState) => {
@@ -109,18 +120,27 @@ export default function Board() {
 
     
     const piece = () => {
-        const randomInt = Math.floor(Math.random() * piecesArray.length);
-        return piecesArray[randomInt];
+        const randomInt = Math.floor(Math.random() * pieceArray.length);
+        return pieceArray[randomInt];
     }
+
+    const values = {
+        boardCtx,
+        drawPixel,
+        pieceOrient,
+        setPieceOrient,
+        isGameRunning,
+        piece: selectedPiece,
+        setPiece: setSelectedPiece,
+        boardArray,
+        ROWS,
+        COLS
+    };
 
     return (
         <>
             <Piece 
-                boardCtx={boardCtx} 
-                drawPixel={drawPixel} 
-                pieceOrient={pieceOrient}
-                setPieceOrient={setPieceOrient}
-                isGameRunning={isGameRunning}
+                values={values}
             />
             <canvas ref={boardCanvasRef} width="600" height="600"></canvas>
             <br/>
