@@ -10,6 +10,7 @@ export default function Piece({ values }) { //boardCtx, boardArray
         isGameRunning, 
         piece,
         setPiece,
+        randomPiece,
         boardArray,
         ROWS,
         COLS
@@ -26,12 +27,6 @@ export default function Piece({ values }) { //boardCtx, boardArray
     useEffect(()=>{
         //console.log('boardCtx in Piece');
         //console.log(boardCtx);
-
-
-        if(piece?.piece){
-            console.log(piece.piece[dirIndexRef.current]);
-        }
-
     }, [boardCtx]);
 
     useEffect(() => {
@@ -90,8 +85,6 @@ export default function Piece({ values }) { //boardCtx, boardArray
         const index = dirIndexRef.current;
         const selectedPiece = piece.piece[index];
 
-        console.log(`index: ${index}`);
-
         for(let r = 0; r < selectedPiece.length; r++){
             for(let c = 0; c < selectedPiece.length; c++){
                 if(selectedPiece[r][c]){ //piece.piece[dirIndexRef.current]
@@ -103,6 +96,7 @@ export default function Piece({ values }) { //boardCtx, boardArray
     function undrawPiece(){
         const index = dirIndexRef.current;
         const selectedPiece = piece.piece[index];
+        console.log(selectedPiece);
 
         for(let r = 0; r < selectedPiece.length; r++){ 
             for(let c = 0; c < selectedPiece.length; c++){
@@ -161,11 +155,26 @@ export default function Piece({ values }) { //boardCtx, boardArray
                 let offsetX = r + xRef.current + x;
                 let offsetY = c + yRef.current + y;
 
-                if(offsetX < 0 || offsetX >= COLS || offsetY >= ROWS){
+                if(offsetX < 0 || offsetX >= COLS){ //|| offsetY >= ROWS
+                    console.log("checkCollision is true");
                     return true;
                 }
 
-                if(boardArray[r][c] !== "white"){
+                if(offsetY >= ROWS){
+                    console.log("checkCollision is true");
+                    lockPiece();
+                    return true;
+                }
+
+                if(boardArray[r][c] !== "white"){ //
+                    console.log("boardArray[r][c] !== 'white'");
+                    console.log(`xRef: ${xRef.current}, yRef:  ${yRef.current}`);
+                    console.log(`r: ${r}, c: ${c}`);
+
+                    lockPiece();
+
+//                    console.table(boardArray);
+
                     return true;
                 }
             }
@@ -183,14 +192,24 @@ export default function Piece({ values }) { //boardCtx, boardArray
                     const offsetY = yRef.current + c;
 
                     drawPixel(offsetX, offsetY, "blue");
+                    boardArray[r][c] = "blue";
                 }
             }
         }
 
-        /*
-        piece = new Piece(pieceArray[1]);
-        setPiece({});
-        */
+        console.table(boardArray);
+
+        resetPiece();
+        
+    }
+
+    function resetPiece(){
+        xRef.current = 0;
+        yRef.current = 0;
+        const newPiece = randomPiece();
+        console.log("newPiece:");
+        console.log(newPiece);
+        setPiece(newPiece);
     }
     return (
         <div>

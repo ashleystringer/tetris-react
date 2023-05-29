@@ -37,7 +37,7 @@ export default function Board() {
 
         setBoardCtx(boardCanvasRef.current.getContext("2d"));
 
-        const newPiece = piece();
+        const newPiece = randomPiece();
         setSelectedPiece(newPiece);
 
         console.log(newPiece);
@@ -53,6 +53,10 @@ export default function Board() {
         };
 
     }, []);
+
+    useEffect(() => {
+        console.log("selectedPiece")
+    }, [selectedPiece]);
 
     function handleKeyDown(e){
         //setPieceOrient(e.keyCode);
@@ -81,15 +85,20 @@ export default function Board() {
 
     function drawPixel(x, y, color){ 
 
-        console.log(boardArray)
-
         const boardContext = boardCanvasRef.current.getContext("2d");
 
         boardContext.fillStyle = color;
         boardContext.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
 
         boardContext.strokeStyle = "black";
-        boardContext.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);        
+        boardContext.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);      
+        
+        /*
+        if(){
+            //if boardArray[x][y] exists
+            //alter that spot
+        }
+        */
     }
 
     function drawBoardCanvas(){
@@ -97,19 +106,18 @@ export default function Board() {
         for(let r = 0; r < ROWS; r++){
             for(let c = 0; c < COLS; c++){
                 drawPixel(c, r, "white");
-                if(boardArray){
-                    //console.log("boardArray exists");
-                    //console.log(boardArray);
-                    //boardArray[r][c] = "white";
-                    //
-                }
             }
         }
-        //console.table(boardArray);
     }
 
     function createBoardArray(){
-        return Array.from({length: ROWS}, () => Array(COLS).fill(0));
+        const boardArray = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+        for(let r = 0; r < ROWS; r++){
+            for(let c = 0; c < COLS; c++){
+                boardArray[r][c] = "white";
+            }
+        }
+        return boardArray;
     }
 
     function playGame(){
@@ -119,7 +127,7 @@ export default function Board() {
     }
 
     
-    const piece = () => {
+    const randomPiece = () => {
         const randomInt = Math.floor(Math.random() * pieceArray.length);
         return pieceArray[randomInt];
     }
@@ -132,6 +140,7 @@ export default function Board() {
         isGameRunning,
         piece: selectedPiece,
         setPiece: setSelectedPiece,
+        randomPiece,
         boardArray,
         ROWS,
         COLS
