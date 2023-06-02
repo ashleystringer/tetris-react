@@ -37,10 +37,10 @@ export default function Board() {
 
         setBoardCtx(boardCanvasRef.current.getContext("2d"));
 
-        const newPiece = randomPiece();
+        /*const newPiece = randomPiece();
         setSelectedPiece(newPiece);
 
-        console.log(newPiece);
+        console.log(newPiece);*/
 
     }, []);
 
@@ -55,7 +55,6 @@ export default function Board() {
     }, []);
 
     useEffect(() => {
-        console.log("selectedPiece")
     }, [selectedPiece]);
 
     function handleKeyDown(e){
@@ -112,9 +111,9 @@ export default function Board() {
 
     function createBoardArray(){
         const boardArray = Array.from({length: ROWS}, () => Array(COLS).fill(0));
-        for(let r = 0; r < ROWS; r++){
-            for(let c = 0; c < COLS; c++){
-                boardArray[r][c] = "white";
+        for(let r = 0; r < ROWS; r++){ //ROWS = 20
+            for(let c = 0; c < COLS; c++){ //COLS = 10
+                boardArray[c][r] = "white";
             }
         }
         return boardArray;
@@ -126,6 +125,13 @@ export default function Board() {
         });
     }
 
+    function sweep(){
+
+    }
+
+    /*
+
+    */
     
     const randomPiece = () => {
         const randomInt = Math.floor(Math.random() * pieceArray.length);
@@ -138,8 +144,8 @@ export default function Board() {
         pieceOrient,
         setPieceOrient,
         isGameRunning,
-        piece: selectedPiece,
-        setPiece: setSelectedPiece,
+        //piece: selectedPiece,
+        //setPiece: setSelectedPiece,
         randomPiece,
         boardArray,
         ROWS,

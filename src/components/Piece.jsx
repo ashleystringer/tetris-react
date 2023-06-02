@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 //import "../constants/pieces.js";
 
 export default function Piece({ values }) { //boardCtx, boardArray
@@ -8,8 +8,8 @@ export default function Piece({ values }) { //boardCtx, boardArray
         pieceOrient, 
         setPieceOrient, 
         isGameRunning, 
-        piece,
-        setPiece,
+        //piece,
+        //setPiece,
         randomPiece,
         boardArray,
         ROWS,
@@ -19,6 +19,8 @@ export default function Piece({ values }) { //boardCtx, boardArray
     - Get the collision detection
     */
 
+    const [piece, setPiece] = useState(null);
+    const [testSelectedPiece, setTestSelectedPiece] = useState(null);
     const xRef = useRef(0);
     const yRef = useRef(0);
     const dirIndexRef = useRef(0);
@@ -27,7 +29,10 @@ export default function Piece({ values }) { //boardCtx, boardArray
     useEffect(()=>{
         //console.log('boardCtx in Piece');
         //console.log(boardCtx);
-    }, [boardCtx]);
+        const newPiece = randomPiece();
+        setPiece(newPiece);
+        setTestSelectedPiece(newPiece);
+    }, []);
 
     useEffect(() => {
         //console.log(`pieceOrient: ${pieceOrient}`);
@@ -96,7 +101,7 @@ export default function Piece({ values }) { //boardCtx, boardArray
     function undrawPiece(){
         const index = dirIndexRef.current;
         const selectedPiece = piece.piece[index];
-        console.log(selectedPiece);
+        //console.log(selectedPiece);
 
         for(let r = 0; r < selectedPiece.length; r++){ 
             for(let c = 0; c < selectedPiece.length; c++){
@@ -145,6 +150,10 @@ export default function Piece({ values }) { //boardCtx, boardArray
     function checkCollision(x, y){
         const index = dirIndexRef.current;
         const selectedPiece = piece.piece[index];
+        console.log("testSelectedPiece");
+        console.log(testSelectedPiece);
+
+        if(!selectedPiece) return;
 
         for(let r = 0; r < selectedPiece.length; r++){
             for(let c = 0; c < selectedPiece.length; c++){
@@ -154,6 +163,8 @@ export default function Piece({ values }) { //boardCtx, boardArray
 
                 let offsetX = r + xRef.current + x;
                 let offsetY = c + yRef.current + y;
+
+                //console.log(`offsetX: ${offsetX}, offsetY: ${offsetY}`);
 
                 if(offsetX < 0 || offsetX >= COLS){ //|| offsetY >= ROWS
                     console.log("checkCollision is true");
@@ -166,7 +177,7 @@ export default function Piece({ values }) { //boardCtx, boardArray
                     return true;
                 }
 
-                if(boardArray[r][c] !== "white"){ //
+                if(boardArray[offsetX][offsetY] !== "white"){ 
                     console.log("boardArray[r][c] !== 'white'");
                     console.log(`xRef: ${xRef.current}, yRef:  ${yRef.current}`);
                     console.log(`r: ${r}, c: ${c}`);
@@ -192,25 +203,46 @@ export default function Piece({ values }) { //boardCtx, boardArray
                     const offsetY = yRef.current + c;
 
                     drawPixel(offsetX, offsetY, "blue");
-                    boardArray[r][c] = "blue";
+                    boardArray[r + xRef.current][c + yRef.current] = "blue";
                 }
             }
         }
 
         console.table(boardArray);
 
-        resetPiece();
+        //resetPiece();
+        xRef.current = 0;
+        yRef.current = 0;
+        const newPiece = randomPiece();
+        console.log("newPiece:");
+        console.log(newPiece);
+        setTestSelectedPiece(newPiece);
         
     }
 
-    function resetPiece(){
+    /*function resetPiece(){
         xRef.current = 0;
         yRef.current = 0;
         const newPiece = randomPiece();
         console.log("newPiece:");
         console.log(newPiece);
         setPiece(newPiece);
-    }
+    }*/
+
+    
+    const resetPiece = useCallback(() => {
+        xRef.current = 0;
+        yRef.current = 0;
+        const newPiece = randomPiece();
+        console.log("newPiece:");
+        console.log(newPiece);
+        setTestSelectedPiece(prevPiece => {
+            const randomizedPiece = randomPiece();
+            return randomizedPiece;
+        });
+        //setPiece(newPiece);
+    }, []);
+    
     return (
         <div>
             
